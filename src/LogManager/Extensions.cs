@@ -27,8 +27,8 @@ namespace LogManager
 			}
 			else if (values.Length == 2)
 			{
-				datePart = values[1].Split(new char[] { '-' });
-				timePart = values[2].Split(new char[] { ':' });
+				datePart = values[0].Split(new char[] { '-' });
+				timePart = values[1].Split(new char[] { ':' });
 				return new DateTime(int.Parse(datePart[2]), int.Parse(datePart[1]), int.Parse(datePart[0]), int.Parse(timePart[0]), int.Parse(timePart[1]), 0);
 			}
 
