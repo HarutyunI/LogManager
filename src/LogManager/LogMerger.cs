@@ -32,7 +32,7 @@ namespace LogManager
 
 					Output("full path: {0}", folderPath);
 
-					var files = Directory.GetFiles(folderPath, "*.log", SearchOption.TopDirectoryOnly);
+					var files = Directory.GetFiles(folderPath, "*.log.*", SearchOption.TopDirectoryOnly);
 
 					Task[] tasks = new Task[files.Length];
 					for (int i = 0; i < files.Length; i++)
