@@ -99,6 +99,7 @@ namespace LogManager
 
 		private void ExportResult(string exportPath)
 		{
+			Output("{0} started exporting result", GetCurrentTimeString());
 			var logs = _logs.AsEnumerable();
 
 			if (_startTime.HasValue)
@@ -159,7 +160,11 @@ namespace LogManager
 			{
 				if (line.StartsWith(logLevel, StringComparison.InvariantCultureIgnoreCase))
 				{
-					return true;
+					var lineLog = line.Substring(line.IndexOf(logLevel, StringComparison.InvariantCultureIgnoreCase)).TrimStart();
+					if (lineLog.Length > 0 && char.IsDigit(lineLog[0]))
+					{
+						return true;
+					}
 				}
 			}
 
