@@ -160,7 +160,7 @@ namespace LogManager
 			{
 				if (line.StartsWith(logLevel, StringComparison.InvariantCultureIgnoreCase))
 				{
-					var lineLog = line.Substring(line.IndexOf(logLevel, StringComparison.InvariantCultureIgnoreCase)).TrimStart();
+					var lineLog = line.Substring(logLevel.Length).TrimStart();
 					if (lineLog.Length > 0 && char.IsDigit(lineLog[0]))
 					{
 						return true;
