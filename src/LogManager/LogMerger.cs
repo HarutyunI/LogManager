@@ -38,12 +38,12 @@ namespace LogManager
 					for (int i = 0; i < files.Length; i++)
 					{
 						int index = i;
-						tasks[index] = Task.Run(() => ReadFile(files[index]));
+						tasks[index] = ReadFile(files[index]);
 					}
 
 					await Task.WhenAll(tasks);
 					string exportPath = Path.Combine(folderPath, $"MergedLog_{GetCurrentTimeString().Replace(':', '-')}.log");
-					ExportResult(exportPath);
+					await ExportResult(exportPath);
 				}
 				catch (Exception ex)
 				{
@@ -57,15 +57,17 @@ namespace LogManager
 			}
 		}
 
-		private void ReadFile(string file)
+		private async Task ReadFile(string file)
 		{
 			string line;
 			Output("{0} Started reading file {1}", GetCurrentTimeString(), file);
-			using (var reader = new StreamReader(file))
+
+			using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
+			using (var reader = new StreamReader(fs))
 			{
 				StringBuilder pendingLine = new StringBuilder();
 				int lineNumber = 0;
-				while ((line = reader.ReadLine()) != null)
+				while ((line = await reader.ReadLineAsync()) != null)
 				{
 					if (!string.IsNullOrWhiteSpace(line))
 					{
@@ -97,7 +99,7 @@ namespace LogManager
 			Output("{0} Finished reading file {1}", GetCurrentTimeString(), file);
 		}
 
-		private void ExportResult(string exportPath)
+		private async Task ExportResult(string exportPath)
 		{
 			Output("{0} started exporting result", GetCurrentTimeString());
 			var logs = _logs.AsEnumerable();
@@ -119,11 +121,13 @@ namespace LogManager
 			{
 				foreach (var log in orderedLogs)
 				{
-					writer.WriteLine(log.LogValue);
+					await writer.WriteLineAsync(log.LogValue);
 				}
 			}
 
 			Output("{0} Finished exporting file", GetCurrentTimeString());
+			_logs.Clear();
+			GC.Collect();
 		}
 
 		private void Reset()
